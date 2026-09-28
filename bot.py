@@ -84,3 +84,42 @@ def quantity():
         "knauf": 800,
         "wood": 600,
         "sand": 1600,
+        "soil": 1200,
+        "gravel": 1700,
+        "plaster": 900,
+        "paint": 1200
+    }
+
+    density = densities.get(material, 0)
+    weight = volume * density                   # kg
+
+    return {
+        "material": material,
+        "length_m": length,
+        "width_m": width,
+        "height_m": height,
+        "thickness_m": thickness,
+        "area_m2": area,
+        "volume_m3": volume,
+        "weight_kg": weight,
+        "count": count,
+        "bags": bags,
+        "message": "محاسبه مهندسی انجام شد ✔️"
+    }
+
+
+############################################
+#   Root
+############################################
+
+@app.get("/")
+def home():
+    return "AI Metra Bot Backend is running ✔️"
+
+
+############################################
+#   Run Server
+############################################
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
