@@ -3,6 +3,7 @@ import telebot
 import requests
 from flask import Flask
 
+# Flask app برای باز کردن پورت Render
 app = Flask(__name__)
 
 @app.route('/')
@@ -66,7 +67,9 @@ def get_dimensions(msg):
 if __name__ == "__main__":
     import threading
 
+    # اجرای ربات تلگرام در یک Thread جدا
     threading.Thread(target=lambda: bot.infinity_polling()).start()
 
+    # پورت صحیح Render
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
