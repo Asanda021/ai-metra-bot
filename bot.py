@@ -137,7 +137,7 @@ def callback(c):
 
         bot.send_message(
             chat_id,
-            f"🔳 {name}\nضریب بتن: {coeff}\n\n📏 طول سقف را وارد کن:",
+            f"🔳 {name}\nضریب بتن: {coeff}\n\n📏 طول سقف را وارد کن:"
         )
         return
 
@@ -541,4 +541,4 @@ def input_handler(msg):
         if st["step"] == "count":
             st["count"] = int(msg.text)
             st["step"] = "length"
-            bot.send_message(chat_id, "
+            bot.send_message(chat_id, "📏 طول ف
