@@ -1,6 +1,14 @@
 import os
 import telebot
 import requests
+from flask import Flask
+
+# پورت فیک برای Render
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running"
 
 TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
@@ -56,4 +64,9 @@ def get_dimensions(msg):
 ✔ محاسبه مهندسی انجام شد.
 """)
 
-bot.infinity_polling()
+# اجرای همزمان Flask و ربات
+if __name__ == "__main__":
+    import threading
+
+    threading.Thread(target=lambda: bot.infinity_polling()).start()
+    app.run(host="0.0.0.0", port=10000)
