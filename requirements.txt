@@ -1,6 +1,2 @@
+telebot
 Flask
-torch
-numpy
-pillow
-requests
-pyTelegramBotAPI==4.14.0
