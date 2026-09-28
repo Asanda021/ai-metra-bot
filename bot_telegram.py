@@ -2,7 +2,7 @@ import os
 import telebot
 import requests
 from flask import Flask
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 app = Flask(__name__)
 
@@ -16,75 +16,101 @@ bot = telebot.TeleBot(TOKEN)
 API = "https://ai-metra-bot.onrender.com"
 
 # -------------------------
-# منوی اصلی
+# منوی اصلی (شیشه‌ای)
 # -------------------------
 def main_menu():
-    menu = ReplyKeyboardMarkup(resize_keyboard=True)
+    menu = InlineKeyboardMarkup()
     menu.add(
-        KeyboardButton("🔍 تشخیص مصالح"),
-        KeyboardButton("📐 متره ساختمان")
+        InlineKeyboardButton("🔍 تشخیص مصالح", callback_data="detect"),
+        InlineKeyboardButton("📐 متره ساختمان", callback_data="metra")
     )
-    menu.add(KeyboardButton("ℹ️ راهنما"))
+    menu.add(
+        InlineKeyboardButton("ℹ️ راهنما", callback_data="help")
+    )
     return menu
 
 # -------------------------
 # منوی دسته‌بندی متره
 # -------------------------
 def metra_menu():
-    menu = ReplyKeyboardMarkup(resize_keyboard=True)
-    menu.add(
-        KeyboardButton("🧱 دیوارچینی"),
-        KeyboardButton("🪨 نازک‌کاری")
+    m = InlineKeyboardMarkup()
+    m.add(
+        InlineKeyboardButton("🏗 سازه‌ای", callback_data="sazeh"),
+        InlineKeyboardButton("🧱 دیوارچینی", callback_data="divar")
     )
-    menu.add(
-        KeyboardButton("🏗 سازه‌ای"),
-        KeyboardButton("🚰 تأسیسات")
+    m.add(
+        InlineKeyboardButton("🪨 نازک‌کاری", callback_data="nazok"),
+        InlineKeyboardButton("🧱 کف‌سازی", callback_data="kaf")
     )
-    menu.add(KeyboardButton("⬅️ بازگشت"))
-    return menu
+    m.add(
+        InlineKeyboardButton("🚰 تأسیسات", callback_data="tasisat")
+    )
+    m.add(InlineKeyboardButton("⬅️ بازگشت", callback_data="back_main"))
+    return m
 
 # -------------------------
 # زیرمنوها
 # -------------------------
 def menu_sazeh():
-    m = ReplyKeyboardMarkup(resize_keyboard=True)
+    m = InlineKeyboardMarkup()
     m.add(
-        KeyboardButton("🧱 بتن"),
-        KeyboardButton("🔩 میلگرد"),
-        KeyboardButton("🛠 تیرآهن")
+        InlineKeyboardButton("🧱 بتن", callback_data="beton"),
+        InlineKeyboardButton("🔩 میلگرد", callback_data="mil"),
+        InlineKeyboardButton("🛠 تیرآهن", callback_data="tir")
     )
-    m.add(KeyboardButton("⬅️ بازگشت"))
+    m.add(
+        InlineKeyboardButton("🧱 ستون", callback_data="soton"),
+        InlineKeyboardButton("🧱 فونداسیون", callback_data="fond"),
+        InlineKeyboardButton("🧱 دیوار برشی", callback_data="divar_b")
+    )
+    m.add(InlineKeyboardButton("⬅️ بازگشت", callback_data="back_metra"))
     return m
 
 def menu_divarchini():
-    m = ReplyKeyboardMarkup(resize_keyboard=True)
+    m = InlineKeyboardMarkup()
     m.add(
-        KeyboardButton("🧱 آجر"),
-        KeyboardButton("🧱 بلوک"),
-        KeyboardButton("🧱 یونولیت")
+        InlineKeyboardButton("🧱 آجر", callback_data="ajer"),
+        InlineKeyboardButton("🧱 بلوک", callback_data="blok"),
+        InlineKeyboardButton("🧱 سفال", callback_data="sofal")
     )
-    m.add(KeyboardButton("⬅️ بازگشت"))
+    m.add(
+        InlineKeyboardButton("🧱 یونولیت", callback_data="yuno")
+    )
+    m.add(InlineKeyboardButton("⬅️ بازگشت", callback_data="back_metra"))
     return m
 
 def menu_nazok():
-    m = ReplyKeyboardMarkup(resize_keyboard=True)
+    m = InlineKeyboardMarkup()
     m.add(
-        KeyboardButton("🪨 سنگ"),
-        KeyboardButton("🧱 سرامیک"),
-        KeyboardButton("🧱 گچ"),
-        KeyboardButton("🧱 کناف")
+        InlineKeyboardButton("🪨 سنگ", callback_data="sang"),
+        InlineKeyboardButton("🧱 سرامیک", callback_data="saramik"),
+        InlineKeyboardButton("🧱 گچ", callback_data="gach")
     )
-    m.add(KeyboardButton("⬅️ بازگشت"))
+    m.add(
+        InlineKeyboardButton("🧱 کناف", callback_data="kanaf"),
+        InlineKeyboardButton("🎨 رنگ", callback_data="rang")
+    )
+    m.add(InlineKeyboardButton("⬅️ بازگشت", callback_data="back_metra"))
+    return m
+
+def menu_kafsazi():
+    m = InlineKeyboardMarkup()
+    m.add(
+        InlineKeyboardButton("🧱 بتن مگر", callback_data="magar"),
+        InlineKeyboardButton("🧱 ماسه سیمان", callback_data="mases"),
+        InlineKeyboardButton("🧱 کفپوش", callback_data="kafpush")
+    )
+    m.add(InlineKeyboardButton("⬅️ بازگشت", callback_data="back_metra"))
     return m
 
 def menu_tasisat():
-    m = ReplyKeyboardMarkup(resize_keyboard=True)
+    m = InlineKeyboardMarkup()
     m.add(
-        KeyboardButton("🚰 لوله آب"),
-        KeyboardButton("🚽 فاضلاب"),
-        KeyboardButton("⚡ کابل برق")
+        InlineKeyboardButton("🚰 لوله آب", callback_data="ab"),
+        InlineKeyboardButton("🚽 فاضلاب", callback_data="faz"),
+        InlineKeyboardButton("⚡ کابل برق", callback_data="bargh")
     )
-    m.add(KeyboardButton("⬅️ بازگشت"))
+    m.add(InlineKeyboardButton("⬅️ بازگشت", callback_data="back_metra"))
     return m
 
 # -------------------------
@@ -92,69 +118,51 @@ def menu_tasisat():
 # -------------------------
 @bot.message_handler(commands=['start'])
 def start(msg):
-    bot.send_message(msg.chat.id, "سلام مهندس محمد 👷‍♂️\nاز منوی زیر انتخاب کن:", reply_markup=main_menu())
+    bot.send_message(
+        msg.chat.id,
+        "سلام مهندس، خوش آمدی 🌟\nیکی از گزینه‌های زیر را انتخاب کن:",
+        reply_markup=main_menu()
+    )
 
 # -------------------------
-# تشخیص مصالح
+# هندل دکمه‌ها
 # -------------------------
-@bot.message_handler(func=lambda m: m.text == "🔍 تشخیص مصالح")
-def ask_photo(msg):
-    bot.send_message(msg.chat.id, "لطفاً عکس مصالح را ارسال کن.")
+@bot.callback_query_handler(func=lambda c: True)
+def callback(c):
+    if c.data == "detect":
+        bot.send_message(c.message.chat.id, "لطفاً عکس مصالح را ارسال کن.")
+    elif c.data == "metra":
+        bot.send_message(c.message.chat.id, "دسته موردنظر را انتخاب کن:", reply_markup=metra_menu())
+    elif c.data == "help":
+        bot.send_message(c.message.chat.id, "راهنما در حال ساخت است…")
 
-@bot.message_handler(content_types=['photo'])
-def photo_handler(msg):
-    file_id = msg.photo[-1].file_id
-    file_info = bot.get_file(file_id)
-    downloaded = bot.download_file(file_info.file_path)
+    # زیرمنوها
+    elif c.data == "sazeh":
+        bot.send_message(c.message.chat.id, "نوع مصالح سازه‌ای:", reply_markup=menu_sazeh())
+    elif c.data == "divar":
+        bot.send_message(c.message.chat.id, "نوع مصالح دیوارچینی:", reply_markup=menu_divarchini())
+    elif c.data == "nazok":
+        bot.send_message(c.message.chat.id, "نوع مصالح نازک‌کاری:", reply_markup=menu_nazok())
+    elif c.data == "kaf":
+        bot.send_message(c.message.chat.id, "نوع مصالح کف‌سازی:", reply_markup=menu_kafsazi())
+    elif c.data == "tasisat":
+        bot.send_message(c.message.chat.id, "نوع مصالح تأسیسات:", reply_markup=menu_tasisat())
 
-    files = {"file": downloaded}
-    r = requests.post(f"{API}/api/detect-material", files=files)
-    result = r.json()
+    # بازگشت
+    elif c.data == "back_metra":
+        bot.send_message(c.message.chat.id, "به منوی متره برگشتی:", reply_markup=metra_menu())
+    elif c.data == "back_main":
+        bot.send_message(c.message.chat.id, "به منوی اصلی برگشتی:", reply_markup=main_menu())
 
-    material = result.get("detected_material", "unknown")
-
-    bot.reply_to(msg, f"مصالح تشخیص داده شد:\n{material}")
-
-# -------------------------
-# انتخاب دسته متره
-# -------------------------
-@bot.message_handler(func=lambda m: m.text == "📐 متره ساختمان")
-def metra(msg):
-    bot.send_message(msg.chat.id, "دسته موردنظر را انتخاب کن:", reply_markup=metra_menu())
-
-# -------------------------
-# انتخاب زیر دسته‌ها
-# -------------------------
-@bot.message_handler(func=lambda m: m.text == "🏗 سازه‌ای")
-def saz(msg):
-    bot.send_message(msg.chat.id, "نوع مصالح سازه‌ای:", reply_markup=menu_sazeh())
-
-@bot.message_handler(func=lambda m: m.text == "🧱 دیوارچینی")
-def divar(msg):
-    bot.send_message(msg.chat.id, "نوع مصالح دیوارچینی:", reply_markup=menu_divarchini())
-
-@bot.message_handler(func=lambda m: m.text == "🪨 نازک‌کاری")
-def nazok(msg):
-    bot.send_message(msg.chat.id, "نوع مصالح نازک‌کاری:", reply_markup=menu_nazok())
-
-@bot.message_handler(func=lambda m: m.text == "🚰 تأسیسات")
-def tasisat(msg):
-    bot.send_message(msg.chat.id, "نوع مصالح تأسیسات:", reply_markup=menu_tasisat())
+    # انتخاب مصالح → شروع دریافت ابعاد
+    else:
+        user_state[c.message.chat.id] = {"material": c.data}
+        bot.send_message(c.message.chat.id, "🔹 لطفاً *طول* را وارد کن (متر):\n(این مقدار طول هست)", parse_mode="Markdown")
 
 # -------------------------
 # دریافت ابعاد مرحله‌به‌مرحله
 # -------------------------
 user_state = {}
-
-@bot.message_handler(func=lambda m: m.text in [
-    "🧱 بتن","🔩 میلگرد","🛠 تیرآهن",
-    "🧱 آجر","🧱 بلوک","🧱 یونولیت",
-    "🪨 سنگ","🧱 سرامیک","🧱 گچ","🧱 کناف",
-    "🚰 لوله آب","🚽 فاضلاب","⚡ کابل برق"
-])
-def ask_length(msg):
-    user_state[msg.chat.id] = {"material": msg.text}
-    bot.send_message(msg.chat.id, "🔹 لطفاً *طول* را وارد کن (متر):\n(این مقدار طول هست)", parse_mode="Markdown")
 
 @bot.message_handler(func=lambda m: m.chat.id in user_state and "length" not in user_state[m.chat.id])
 def get_length(msg):
