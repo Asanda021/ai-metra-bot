@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Metra</title>
+<style>
+body { font-family: sans-serif; padding: 40px; }
+input, button { padding: 10px; margin: 10px 0; width: 300px; }
+</style>
+</head>
+<body>
+
+<h2>تشخیص مصالح از عکس</h2>
+
+<form id="form">
+    <input type="file" id="file"><br>
+    <button type="button" onclick="detect()">تشخیص</button>
+</form>
+
+<p id="result"></p>
+
+<h2>متره</h2>
+<input id="length" placeholder="طول (متر)">
+<input id="width" placeholder="عرض (متر)">
+<input id="height" placeholder="ارتفاع (متر)">
+<button onclick="metra()">محاسبه</button>
+
+<p id="metra_result"></p>
+
+<script>
+function detect() {
+    let file = document.getElementById("file").files[0];
+    let formData = new FormData();
+    formData.append("file", file);
+
+    fetch("https://ai-metra-bot.onrender.com/api/detect-material", {
+        method: "POST",
+        body: formData
+    })
+    .then(r => r.json())
+    .then(d => {
+        document.getElementById("result").innerText = "مصالح: " + d.detected_material;
+    });
+}
+
+function metra() {
+    let data = {
+        material: "stone",
+        length: parseFloat(document.getElementById("length").value),
+        width: parseFloat(document.getElementById("width").value),
+        height: parseFloat(document.getElementById("height").value)
+    };
+
+    fetch("https://ai-metra-bot.onrender.com/api/quantity", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(d => {
+        document.getElementById("metra_result").innerText =
+            "مساحت: " + d.area_m2 + " m²\n" +
+            "حجم: " + d.volume_m3 + " m³\n" +
+            "وزن: " + d.weight_kg + " kg";
+    });
+}
+</script>
+
+</body>
+</html>
