@@ -10,21 +10,17 @@ app = Flask(__name__)
 #   Vision AI – تشخیص مصالح از عکس (رایگان)
 ############################################
 
-# مدل رایگان MobileNetV2
 model = models.mobilenet_v2(pretrained=True)
 model.eval()
 
-# پردازش تصویر
 preprocess = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
 ])
 
-# لیبل‌های ImageNet
 LABELS_URL = "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt"
 labels = requests.get(LABELS_URL).text.split("\n")
-
 
 @app.post("/api/detect-material")
 def detect_material():
@@ -56,21 +52,17 @@ def quantity():
 
     material = data.get("material", "").lower()
 
-    length = float(data.get("length", 0))       # متر
-    width = float(data.get("width", 0))         # متر
-    height = float(data.get("height", 0))       # متر
-    thickness = float(data.get("thickness", 0)) # متر
+    length = float(data.get("length", 0))
+    width = float(data.get("width", 0))
+    height = float(data.get("height", 0))
+    thickness = float(data.get("thickness", 0))
 
-    count = int(data.get("count", 0))           # مصالح دونه‌ای
-    bags = int(data.get("bags", 0))             # مصالح کیسه‌ای
+    count = int(data.get("count", 0))
+    bags = int(data.get("bags", 0))
 
-    # مساحت
-    area = length * width                       # m²
+    area = length * width
+    volume = length * width * height
 
-    # حجم
-    volume = length * width * height            # m³
-
-    # چگالی‌ها (kg/m³)
     densities = {
         "concrete": 2400,
         "steel": 7850,
@@ -91,9 +83,7 @@ def quantity():
     }
 
     density = densities.get(material, 0)
-
-    # وزن
-    weight = volume * density                   # kg
+    weight = volume * density
 
     return {
         "material": material,
