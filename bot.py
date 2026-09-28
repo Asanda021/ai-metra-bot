@@ -1,10 +1,54 @@
 from flask import Flask, request
+import torch
+from torchvision import models, transforms
+from PIL import Image
+import requests
 
 app = Flask(__name__)
 
-@app.get("/")
-def home():
-    return "AI Metra Bot Backend is running ✔️"
+############################################
+#   Vision AI – تشخیص مصالح از عکس (رایگان)
+############################################
+
+# مدل رایگان MobileNetV2
+model = models.mobilenet_v2(pretrained=True)
+model.eval()
+
+# پردازش تصویر
+preprocess = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+])
+
+# لیبل‌های ImageNet
+LABELS_URL = "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt"
+labels = requests.get(LABELS_URL).text.split("\n")
+
+
+@app.post("/api/detect-material")
+def detect_material():
+    if "file" not in request.files:
+        return {"error": "عکس ارسال نشده"}
+
+    img = Image.open(request.files["file"]).convert("RGB")
+    img_tensor = preprocess(img).unsqueeze(0)
+
+    with torch.no_grad():
+        output = model(img_tensor)
+        _, predicted = torch.max(output, 1)
+
+    label = labels[predicted.item()]
+
+    return {
+        "detected_material": label,
+        "message": "تشخیص تصویر انجام شد ✔️"
+    }
+
+
+############################################
+#   Quantity – فقط متره‌وبرآورد (بدون قیمت)
+############################################
 
 @app.post("/api/quantity")
 def quantity():
@@ -65,12 +109,19 @@ def quantity():
         "message": "محاسبه مهندسی انجام شد ✔️"
     }
 
-@app.post("/api/detect-material")
-def detect_material():
-    return {
-        "message": "این API آماده دریافت عکس است ✔️",
-        "status": "waiting_for_image"
-    }
+
+############################################
+#   Root
+############################################
+
+@app.get("/")
+def home():
+    return "AI Metra Bot Backend is running ✔️"
+
+
+############################################
+#   Run Server
+############################################
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
