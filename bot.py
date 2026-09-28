@@ -11,18 +11,21 @@ def quantity():
     data = request.json
 
     material = data.get("material", "").lower()
-    length = float(data.get("length", 0))
-    width = float(data.get("width", 0))
-    height = float(data.get("height", 0))
-    thickness = float(data.get("thickness", 0))   # برای سنگ، سرامیک، کاشی، کناف
-    count = int(data.get("count", 0))             # مصالح دونه‌ای
-    bags = int(data.get("bags", 0))               # مصالح کیسه‌ای
+
+    # ابعاد ورودی
+    length = float(data.get("length", 0))       # متر
+    width = float(data.get("width", 0))         # متر
+    height = float(data.get("height", 0))       # متر
+    thickness = float(data.get("thickness", 0)) # متر (برای سنگ، سرامیک، کاشی، کناف)
+
+    count = int(data.get("count", 0))           # مصالح دونه‌ای
+    bags = int(data.get("bags", 0))             # مصالح کیسه‌ای
 
     # محاسبه مساحت
-    area = length * width  # m²
+    area = length * width                       # متر مربع
 
     # محاسبه حجم
-    volume = length * width * height  # m³
+    volume = length * width * height            # متر مکعب
 
     # چگالی‌ها (kg/m³)
     densities = {
@@ -35,34 +38,16 @@ def quantity():
         "stone": 2600,
         "ceramic": 2000,
         "tile": 2000,
-        "knauf": 800
+        "knauf": 800,
+        "wood": 600,
+        "sand": 1600,
+        "soil": 1200,
+        "gravel": 1700,
+        "plaster": 900,
+        "paint": 1200
     }
 
     density = densities.get(material, 0)
 
     # وزن
     weight = volume * density
-
-    return {
-        "material": material,
-        "length_m": length,
-        "width_m": width,
-        "height_m": height,
-        "thickness_m": thickness,
-        "area_m2": area,
-        "volume_m3": volume,
-        "weight_kg": weight,
-        "count": count,
-        "bags": bags,
-        "message": "محاسبه واحدهای مهندسی انجام شد ✔️"
-    }
-
-@app.post("/api/detect-material")
-def detect_material():
-    return {
-        "message": "این API آماده دریافت عکس است ✔️",
-        "status": "waiting_for_image"
-    }
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
