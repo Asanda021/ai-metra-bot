@@ -53,5 +53,12 @@ def quantity():
         "message": "محاسبه حجم، وزن و قیمت با موفقیت انجام شد ✔️"
     }
 
+@app.post("/api/detect-material")
+def detect_material():
+    return {
+        "message": "این API آماده دریافت عکس است ✔️",
+        "status": "waiting_for_image"
+    }
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
